@@ -5,8 +5,9 @@ shinyUI(fluidPage(
   
   sidebarLayout(
     sidebarPanel(
+      helpText("This app is allows users to see the effects of changing the parameters of simple and double exponential smoothing methods."),
       
-      helpText("Choose time series from a selection of sample datasets included with R, type of exponential smoothing and value(s) of smoothing parameter(s)"),
+      helpText("Choose a time series from a selection of sample datasets included with R, type of exponential smoothing and value(s) of smoothing parameter(s)"),
       selectInput("tseries", 
                   label = "Choose time series",
                   choices = list("AirPassengers", "BJsales",
@@ -19,13 +20,13 @@ shinyUI(fluidPage(
 
       
       sliderInput("alpha", 
-                  label = "alpha",
+                  label = withMathJax("\\(\\alpha\\)"),
                   min = -1, max = 2, value = 0.5,step=0.05
       ),
       conditionalPanel(
         condition="input.type=='double'",
         sliderInput("beta", 
-                  label = "beta",
+                  label = withMathJax("\\(\\beta\\)"),
                   min = -1, max = 2, value = 0.5,step=0.05
         )
       )
