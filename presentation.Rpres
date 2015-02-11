@@ -1,0 +1,60 @@
+Effects of exponential smoothing paramethers
+========================================================
+author: rkangr
+date: 9 February 2015
+
+Motivation
+========================================================
+
+- Often it is useful to reduce noise in time series data in order to see important aspects of general tendencies
+- We consider **exponential smoothing** and **double exponential smoothing**
+- It is good to have solid understanding of how different values of smoothing parameters influence the result
+- What happens, if the smoothing parameters approach 0 or 1? What happens, if they are outside the usual interval $[0,1]$?
+- Try it out wiht the shiny app [http://rkangr.shinyapps.io/ExponentialSmoothing](http://rkangr.shinyapps.io/ExponentialSmoothing)!
+
+Example: Exponential smoothing
+========================================================
+
+If $z_t,\ t=1,\ldots,n$ is original series, the exponentially smoothed series $y_t,\ t=1,\ldots,n$ is defined by
+$$y_1=z_1;\ y_t=\alpha z_t+(1-\alpha)y_{t-1},\ t=2,\ldots,n$$
+Parameter $\alpha$ is the smoothing parameter
+
+
+```{r,echo=FALSE,fig.align="center",fig.width=10,fig.height=5}
+plot(AirPassengers)
+tmp=HoltWinters(AirPassengers,alpha=0.4,beta=F,gamma=F)
+lines(tmp$fitted[,"xhat"],col="red",lwd=2)
+legend(1950,500,c("original","smoothed, alpha=0.4"),text.col=c("black","red"))
+```
+
+Example: double (Holt's) exponential smoothing
+========================================================
+If $z_t,\ t=1,\ldots,n$ is original series, the double exponential smoothing is defined by
+$$y_t=\alpha z_t+(1-\alpha)(y_{t-1}+b_{t-1}),\ b_t=\beta (y_t-y_{t-1})+(1-\beta) b_{t-1}$$
+with suitable starting values for $y_1$ and $b_1$. Parameters $\alpha$ and $\beta$ are the smoothing parameters. If $\alpha$ and $\beta$ are not between $0$ and $1$, the resulting "smoothed" series may behave starngely or it may "blow up".
+
+```{r,echo=FALSE,fig.align="center",fig.width=10,fig.height=4}
+plot(AirPassengers)
+series=AirPassengers
+tmp=AirPassengers
+alpha=0.2
+beta=1.4
+b=series[2]-series[1]
+for(i in 2:length(series)){
+    tmp[i]=alpha*series[i]+(1-alpha)*(tmp[i-1]+b)
+    b=beta*(tmp[i]-tmp[i-1])+(1-beta)*b
+} 
+#tmp=HoltWinters(AirPassengers,alpha=0.4,beta=1.2,gamma=F)
+lines(tmp,col="red",lwd=2)
+legend(1950,500,c("original","smoothed, alpha=0.2, beta=1.4"),text.col=c("black","red"))
+```
+
+Exponential smoothing app
+==========================
+
+With the app it is possible to
+
+- choose smoothing type (exponential or double exponential)
+- choose dataset from R sample datasets `Aripassengers`, `BJsales`,`ldeaths`
+- modify values of smoothing parameters to see the effect on resulting smoothed curve
+- try it out: [http://rkangr.shinyapps.io/ExponentialSmoothing](http://rkangr.shinyapps.io/ExponentialSmoothing)
